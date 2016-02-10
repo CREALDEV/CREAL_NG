@@ -1,1 +1,17 @@
-main documentations
+CREAL was a project created at the Center for Research and Education on Aging
+in order to assist biologists conduct advanced and powerful mathematical
+simulations.
+
+When the project was first initiated, it was merely a small php web application.
+The previoius scientist left the project abruptly, and then Randall White was 
+tasked to increasing performance by utilizing graphical processing units. 
+
+Information about gpus increasing parallel performance was taken per diem, 
+instead of heavy investigations. Gpus are very tuned to certain workloads, this it was not suitable for our simulations. 
+
+What came out of the project was dynamic compilation from the standpoint of the C programming language.
+
+CREAL evolved into a self modifyable framework for biologists to create 
+high performance straight to metal simulations.
+
+##main documentations##

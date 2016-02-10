@@ -1,3 +1,7 @@
+#ifndef _MAIN_CREAL_LIB_
+#define _MAIN_CREAL_LIB_
+
+
 //This file is located from within the parser directory
 
 /* NON is used to tell the computer that no action should be taken.. 
@@ -1231,4 +1235,84 @@ mode_t read_umask (void) {
     return mask;
 }
 
+
+/* These macros were copied verbatim from an earlier version of the creal parser */
+#define SHARED_MEM_DIR_PATH "/dev/shm/creal/" //this is used to create a folder in order to facilitate multiprocessing.
+#define SHARED_MEM_FILE "/dev/shm/creal/phpSHMcore0" //this is used to create a folder in order to facilitate multiprocessing.
+#define PATH "/dev/shm/core" //this is used for the named pipe..
+#define DEFAULT_THREAD_COUNT 4 //this is used to determine the default thread count of the application- unless there is a over ride
+#define MAX_THREADS 16 //this is just put in for measure
+#define ERROR_FILE "/dev/shm/php_pipe_errors" //this is used to look at the errors of the php stuff
+
+/* These were added to facilitate pipe IPC, for expression parsing */
+//Most of this shit is deprecated
+
+#define PIPE_IN_FILE "/dev/shm/crealPipeInput"
+#define PIPE_OUT_FILE "/dev/shm/crealPipeOutput"
+#define MAX_PIPE_SIZE 2048
+
+//~ #include "libs/json_parse.h"
+
+#define USAGE "Cerebro, the maker of Creal version .07" //this is the usage of the program
+
+#define CREAL_FILE_NAME "creal_ng.bin" //the name of the binary
+
+#define CREAL_INCLUDE_FILE_NAME "creal_ng.h" //the name of the include file
+
+#define CREAL_MAIN_CSOURCE_FILE_NAME "creal_ng.c" //this is the name of the main source file
+
+/* This right here are the headers for the Creal_NG binary*/
+#define CREAL_HEADERS "#include <stdio.h> \n#include <stdlib.h> \n#include <errno.h> \n#include <unistd.h> \n#include <string.h> \n#include <sys/types.h> \n#include <sys/stat.h> \n#include <time.h> \n#include <fcntl.h> \n#include <math.h> \n#include <pthread.h> \n#include <omp.h> \n#include <mqueue.h>" 
+
+#define MAIN_PART "int main(int argc, char **argv) \n {" //this is actually the beginning of the main function of the application
+
+#define END_PART "\n \n \n \
+		\
+exit(EXIT_SUCCESS);	\n}" //this is the end of the application
+
+/* names of the structures*/
+#define NAME_CREAL_NODE_STRUCTURE "crealNodes" //this is the name of the main creal node array of structures
+
+#define NAME_CREAL_PROP_STRUCTURE "crealProperties" //this is the name of the main creal properties array of structures
+
+#define NAME_CREAL_ACT_STRUCTURE "crealActions" //this is the name of the main creal node array of structures
+
+
+/* These are used to pad the structures */
+
+#define ACTION_AND_CONDITION_PAD 80 //these are used to add an extra amount of action, and conditions to the nodes
+
+#define ACTIONLIST_PAD 15 //pad the action lists
+
+#define PROPERTY_PAD 205 //pad the properties
+
+#define CREAL_NODE_PAD 105 //pad the nodes
+
+#define INDEX_PAD 201 //this is a pad for the index of the nodes 
+
+	/* These are function prototypes */
+
+
+	int abstractJsonData(json_t **root, FILE **fp); //this is used to print out the json data to a file or stdout
+	int returnNumberOfCrealNodes(json_t **root); //used to return the expression
+	int returnNumberOfCrealProperties(json_t **root); //returns the number of creal properties
+	int returnHighestCrealPropertyID(json_t **root); //returns the highest creal property id in the json data
+	int printOutStaticActionList(uint actionCount, uint conditionCount,  FILE **stream ); //this is to print out the action list right here
+	int printOutStaticCrealNodes(uint actionListCount, uint propertiesCount, FILE **stream); //this function actually prints out the static creal node data
+	int printOutNodeActionAndPropArrays(uint crealNodeCount, uint actionListCount, uint propertiesCount,  FILE **stream); //this function will output basic necissity
+	int printOutMaxPreprocessedValues(uint propMax, uint actListMax, uint actAndCondMax, uint nodeMax, FILE **stream); //this is used to print out the max values to be used inside of creal_ng
+	int returnNumberOfCoresOnSystem(void); //this function will return the amount of cores available on the system
+	int createPipeFile(const char *path); //this will create a pipe in a specified location
+	int writeOutActionConditionFunctions(json_t **root, FILE **fp); //this function is used to write out functions for actions and conditions, and assign them to function pointers
+	int writeOutActionConditionFunctionsPrototypes(json_t **root, FILE **fp); //this function writes out the prototypes for the functions in the simulator
+	int ctcpdCommunicationFunction(const char *inputFile, const char *outputFile, const char *inputString, char outputString[]); //this is the main function for communicating to ctcpd
+	int quitCtcpd(const char *inputFile, const char *outputFile); //this will make the ctcpd daemon exit
+	int readFromPipe(const char *path, char buffer[]); //read from a FIFO file (not really a pipe)
+	int writeToPipe(const char *path, const char *string); //write to a FIFO file (not really a pipe)
+	int printOutFromCTF(const char *path, FILE **fp); //this function will print out a ctf file and place it inside of the application
+	
+		/* Global variables here, sometimes we don't want things declared in the stack */
+		
+		
+#endif /*_MAIN_CREAL_LIB_*/
 
