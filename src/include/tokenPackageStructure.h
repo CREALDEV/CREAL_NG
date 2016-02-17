@@ -31,6 +31,7 @@ struct tokenPackage
 	
 	};
 
+struct tokenPackage *left, *right, *next; //these are used for linked lists
 };
 
 /* This was awesome */
