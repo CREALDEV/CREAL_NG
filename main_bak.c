@@ -1,12 +1,11 @@
 /*
  * Cerebro 
- * Made by Randall White
+ * Created by Randall White, Trever Chan, etc	
  * 
  *  
  * 
  * 
  * */ 
- 
 #include <stdio.h> //standard library
 #include <stdlib.h>
 #include <errno.h>
@@ -17,109 +16,24 @@
 #include <time.h>
 #include <fcntl.h> //for file descriptor stuff
 #include <stdbool.h> 
+#include <math.h> //this is the standard math library for figureing out math functions	
+
 #include <jansson.h> //this is jansson
-#include "include/creal.h" //this is jansson
-#include <sys/socket.h>
+#include "libcudacreal.h"
+#include "struct_definitions.h" //struct definitions
 
-     //~ int
-     //~ socketpair(int d, int type, int protocol, int sv[2]);
-
-#include "staticStrings/include/staticStrings.h" //struct definitions
-
-#define DEFAULT_TMP_PATH "/tmp" //default tmp folder
-#define DEFAULT_SHM_PATH "/dev/shm/" //shared memory
-#define DEFAULT_PROCESS_NUMBER 4 //default processes to fork
+static struct sigaction act; //main signal structure for the application, I think this is wrong -Randy 		
+char tempString[256]; //this is here to just make a path for our function in order to run our parse daemon
+pid_t crealPid; //this is used to grab the pid of the process
+pid_t pid, sid, cpid; // this is the pid for our daemon process redundant
 
 
 
-/* This is the actual cool stuff right here */
-
-
-
-
-
-
-
-
-/* These were added to facilitate pipe IPC, for expression parsing */
-//Most of this shit is deprecated
-
-
-
-//~ #include "libs/json_parse.h"
-
-
-/* This right here are the headers for the Creal_NG binary*/
-#define CREAL_HEADERS "#include <stdio.h> \n#include <stdlib.h> \n#include <errno.h> \n#include <unistd.h> \n#include <string.h> \n#include <sys/types.h> \n#include <sys/stat.h> \n#include <time.h> \n#include <fcntl.h> \n#include <math.h> \n#include <pthread.h> \n#include <omp.h> \n#include <mqueue.h>" 
-
-#define MAIN_PART "int main(int argc, char **argv) \n {" //this is actually the beginning of the main function of the application
-
-#define END_PART "\n \n \n \
-		\
-exit(EXIT_SUCCESS);	\n}" //this is the end of the application
-
-/* names of the structures*/
-#define NAME_CREAL_NODE_STRUCTURE "crealNodes" //this is the name of the main creal node array of structures
-
-#define NAME_CREAL_PROP_STRUCTURE "crealProperties" //this is the name of the main creal properties array of structures
-
-#define NAME_CREAL_ACT_STRUCTURE "crealActions" //this is the name of the main creal node array of structures
-
-
-/* These are used to pad the structures */
-
-#define ACTION_AND_CONDITION_PAD 80 //these are used to add an extra amount of action, and conditions to the nodes
-
-#define ACTIONLIST_PAD 15 //pad the action lists
-
-#define PROPERTY_PAD 205 //pad the properties
-
-#define CREAL_NODE_PAD 105 //pad the nodes
-
-#define INDEX_PAD 201 //this is a pad for the index of the nodes 
-
-#define MAX_CPU_THREAD 4
-#define MAX_SOMETHING 2
-#define DEFINED_SOCKETPAIR_SIZE 2 /* */ 
-
-
-	/* These are function prototypes */
-
-
-	int abstractJsonData(json_t **root, FILE **fp); //this is used to print out the json data to a file or stdout
-	int returnNumberOfCrealNodes(json_t **root); //used to return the expression
-	int returnNumberOfCrealProperties(json_t **root); //returns the number of creal properties
-	int returnHighestCrealPropertyID(json_t **root); //returns the highest creal property id in the json data
-	int printOutStaticActionList(uint actionCount, uint conditionCount,  FILE **stream ); //this is to print out the action list right here
-	int printOutStaticCrealNodes(uint actionListCount, uint propertiesCount, FILE **stream); //this function actually prints out the static creal node data
-	int printOutNodeActionAndPropArrays(uint crealNodeCount, uint actionListCount, uint propertiesCount,  FILE **stream); //this function will output basic necissity
-	int printOutMaxPreprocessedValues(uint propMax, uint actListMax, uint actAndCondMax, uint nodeMax, FILE **stream); //this is used to print out the max values to be used inside of creal_ng
-	int returnNumberOfCoresOnSystem(void); //this function will return the amount of cores available on the system
-	int createPipeFile(const char *path); //this will create a pipe in a specified location
-	int writeOutActionConditionFunctions(json_t **root, FILE **fp); //this function is used to write out functions for actions and conditions, and assign them to function pointers
-	int writeOutActionConditionFunctionsPrototypes(json_t **root, FILE **fp); //this function writes out the prototypes for the functions in the simulator
-	int ctcpdCommunicationFunction(const char *inputFile, const char *outputFile, const char *inputString, char outputString[]); //this is the main function for communicating to ctcpd
-	int quitCtcpd(const char *inputFile, const char *outputFile); //this will make the ctcpd daemon exit
-	int readFromPipe(const char *path, char buffer[]); //read from a FIFO file (not really a pipe)
-	int writeToPipe(const char *path, const char *string); //write to a FIFO file (not really a pipe)
-	int printOutFromCTF(const char *path, FILE **fp); //this function will print out a ctf file and place it inside of the application
-	
-		/* Global variables here, sometimes we don't want things declared in the stack */
-		
-		char tempString[256]; //this is here to just make a path for our function in order to run our parse daemon
-		pid_t crealPid; //this is used to grab the pid of the process
-		pid_t pid, sid, cpid; // this is the pid for our daemon process redundant
-		
-		
-		
 int main(int argc, char **argv)
 {
 	
 	
 	
-	
-					int sv[MAX_CPU_THREAD][DEFINED_SOCKETPAIR_SIZE]; /* THESE ARE USED FOR THE SOCKET PAIRS */ 
-					
 					if (argc <= 2)		
 					{
 						//nothing was entered to start the application correctly
@@ -133,16 +47,57 @@ int main(int argc, char **argv)
 						
 					}
 	
-	socketpair(int d, int type, int protocol, int sv[2]);
-	
-					FILE *outputFP = NULL; //this is to actually write the file
+						/* Right here we are initiating the application */ 
+					  act.sa_sigaction = &catchinstance;
+					  act.sa_flags = SA_SIGINFO;
+					  sigfillset(&(act.sa_mask));
+
+					  sigaction(SIGHUP, &act, NULL);//1
+					  sigaction(SIGKILL, &act, NULL);//9
+					  sigaction(SIGTERM, &act, NULL);//15
+					  sigaction(SIGCHLD, &act, NULL);//17
+
+					  act.sa_handler = SIG_IGN;
+					  sigfillset(&act.sa_mask);
+					  act.sa_flags = 0;
+					  sigaction(SIGPIPE, &act, NULL);//13
+
+						FILE *outputFP = NULL; //this is to actually write the file
 					
 					/* The stuff below is used for grabing the amount of processors on the system */
-					const int numCPU = returnNumberOfCoresOnSystem(); //this is the number of cpus available for use
-					if (numCPU <= 0) { quitWithError("We didn't get a proper CPU count!!"); }
-					crealPid = getpid(); //getting the pid of creal	
 					
+					//~ crealPid = getpid(); //getting the pid of creal	
+					
+			register int i, machineId, forkIndicator; 
 
+			for (i = 5; i != 0; i--)
+			{
+					if (fork() == 0)
+					{ 	
+					machineId = getpid(); //get the pid
+					daemon(0,0); // set up a dae
+						goto BEGIN; //branch to begin	
+					
+					}
+					else
+					{
+
+					} 
+				
+			}		 
+
+				//this is for the parent process
+				machineId = getpid(); //get the pid
+				daemon(0,0); // set up a dae
+				BEGIN:
+				
+
+				while(1)
+				{
+						
+						usleep(50);
+					
+				} 
 					/* The json processing */ 
 					json_t *root; //json root
 					
