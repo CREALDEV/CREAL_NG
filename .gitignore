@@ -1,1 +1,7 @@
 src/include/tokenPackageStructure.h~
+creal.o
+linenoise.o 
+strlcat.o 
+strlcpy.o 
+signals.o
+creal_ng

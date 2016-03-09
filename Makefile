@@ -22,7 +22,7 @@ signals : src/signals.c src/include/signals.h
 	cc -c src/signals.c 
 #-Wall
 
-main : src/linenoise.o creal.o
+main : linenoise.o creal.o strlcat.o strlcpy.o signals.o 
 	@echo "making CREAL_NG"
 	cc  creal.o linenoise.o strlcat.o strlcpy.o signals.o -o creal_ng
 #-Wall
