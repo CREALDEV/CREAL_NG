@@ -12,6 +12,9 @@
 #include <math.h> //this is the standard math library for figureing out math functions	
 #include <signal.h>
 #define MAX_CMD_LEN 256
+#define MAX_CMD_LEN_2 4096
+
+
 
 //~ #include <jansson.h> //this is jansson
 //~ #include "libcudacreal.h"
