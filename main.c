@@ -1,4 +1,3 @@
-
 #include <stdio.h> //standard library
 #include <stdlib.h>
 #include <errno.h>
@@ -6,11 +5,18 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/select.h>
+#include <sys/wait.h>
+#include <err.h>
+#include <fcntl.h>
+#include <mqueue.h>
 #include <time.h>
 #include <fcntl.h> //for file descriptor stuff
 #include <stdbool.h> 
 #include <math.h> //this is the standard math library for figureing out math functions	
 #include <signal.h>
+
+
 #define MAX_CMD_LEN 256
 #define MAX_CMD_LEN_2 4096
 
@@ -31,19 +37,22 @@ pid_t pid, sid, cpid; // this is the pid for our daemon process redundant
 
 void completion(const char *buf, linenoiseCompletions *lc) {
   if (buf[0] == 'y') {
+    
     linenoiseAddCompletion(lc, "yo");
     linenoiseAddCompletion(lc, "hello there");
+    linenoiseAddCompletion(lc, "ADD");
+    linenoiseAddCompletion(lc, "MOD");
+    linenoiseAddCompletion(lc, "DEL");
+    linenoiseAddCompletion(lc, "CPY");
+    
   }
 }
 
-// THIS IS GREAT SHIT!! - RANDY, LOOK UP ALLOCA!! bwahahaha!
-// this function will return a char which will be printed to stdout
-// this is not the best solution but having a function that interperts and runs
-// all user input will be a simple solution
+//using alloca was really stupid --Randy
 
 char* runCommmand(const char *cmd) {
   
-  char* outputBuffer = alloca(256);
+  char* outputBuffer = malloc(256); //I thought I changed this
   // not safe // now safe -Randy
   strlcpy(outputBuffer, "you entered: ",14); //out put
   strlcat(outputBuffer, cmd, MAX_CMD_LEN); //main cmd copy 
