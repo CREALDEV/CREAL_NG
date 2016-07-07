@@ -13,10 +13,10 @@
 #include <stdbool.h> 
 
 #include <cairo/cairo.h>
-#include "cairosdl.h"
+#include "src/include/cairosdl.h"
 //~ #include <gtk/gtk.h>
 
-#include "tree.h" //
+#include "src/include/tree.h" //
 
 
 #define SCREEN_WIDTH 1280
@@ -134,10 +134,10 @@ int main(int argc, char* argv[])
 				}
 	
 		
-		draw_screen(hello); 
+		//~ draw_screen(hello); 
 		//drawNode();//this is a test function right here
-		SDL_BlitSurface( hello, NULL, screen, NULL );
-		SDL_Flip (screen); //make sure you flip the buffers to right here 
+		//~ SDL_BlitSurface( hello, NULL, screen, NULL );
+		//~ SDL_Flip (screen); //make sure you flip the buffers to right here 
 
 	
 	}
