@@ -12,36 +12,6 @@
 #include <SDL/SDL.h>
 #include <stdbool.h> 
 
-/*
-
-enum CREAL_JOY_STATES {
-	//these are just enumerated states in order to process joystick events.
-	JOY_UP,
-	JOY_DOWN,
-	JOY_LEFT,
-	JOY_RIGHT,
-	JOY_UP_LEFT,
-	JOY_UP_RIGHT,
-	JOY_DOWN_LEFT,
-	JOY_DOWN_RIGHT,
-	JOY_BUTTON_0,
-	JOY_BUTTON_1,
-	JOY_BUTTON_2,
-	JOY_BUTTON_3,
-	JOY_BUTTON_4,
-	JOY_BUTTON_5,
-	JOY_BUTTON_6,
-	JOY_BUTTON_7,
-	JOY_BUTTON_8,
-	JOY_BUTTON_9 ,
-	JOY_BUTTON_10,
-	JOY_BUTTON_11,
-	JOY_BUTTON_12
-		
-};
-
-*/
-
 //created by Trevor Chan, and modified by Randy White
 
 //Ripped from man page
@@ -110,7 +80,7 @@ int main(int argc, char* argv[])
 
 		//~ mq_setattr(mq,&attr,NULL); //SETTING THE ATTRIBUTES OF THE MESSAGE QUEUE
 
-		mq_send(mq, "L", 2, 1); //make sure to cast this thing here
+		//~ mq_send(mq, "L", 2, 1); //make sure to cast this thing here
 		perror("set attr\n");	
 
 

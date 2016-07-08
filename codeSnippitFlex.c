@@ -105,3 +105,33 @@ int shrdMemFile(const char *path, char buffer[])
 }
 
 
+
+/*
+
+enum CREAL_JOY_STATES {
+	//these are just enumerated states in order to process joystick events.
+	JOY_UP,
+	JOY_DOWN,
+	JOY_LEFT,
+	JOY_RIGHT,
+	JOY_UP_LEFT,
+	JOY_UP_RIGHT,
+	JOY_DOWN_LEFT,
+	JOY_DOWN_RIGHT,
+	JOY_BUTTON_0,
+	JOY_BUTTON_1,
+	JOY_BUTTON_2,
+	JOY_BUTTON_3,
+	JOY_BUTTON_4,
+	JOY_BUTTON_5,
+	JOY_BUTTON_6,
+	JOY_BUTTON_7,
+	JOY_BUTTON_8,
+	JOY_BUTTON_9 ,
+	JOY_BUTTON_10,
+	JOY_BUTTON_11,
+	JOY_BUTTON_12
+		
+};
+
+*/

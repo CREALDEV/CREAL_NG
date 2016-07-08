@@ -9,13 +9,14 @@
 #include "tree.h" //I'm lazy, just plopping this in the directory
 
 #define HELL_MAX 2048 /* This is temporary, it probably needs to be expanded */
+#define TOKEN_ARRAY_MAX 2048 /* This is temporary, it probably needs to be expanded */
 
 	union pload {
 	/* These are the variables associated with the payloads
 	At the moment there are only strings, float matrices, a long double and long long int	
 	 */
-	char stringP[HELL_MAX];
-	float floatP[HELL_MAX][HELL_MAX];
+	char stringP[TOKEN_ARRAY_MAX];
+	//~ float floatP[HELL_MAX][HELL_MAX]; //this right here is too much for the message queues
 	long long int intP;	
 	long double doubleP;	
 	
@@ -33,9 +34,8 @@ struct tokenPackage
 	pid_t processId; 
 	/* The process id for package, so we can track */ 
 	FILE *filePointer; /* The main file pointer which is C standard */
-	char filePathString[HELL_MAX];/* The main file path string */
+	char filePathString[TOKEN_ARRAY_MAX];/* The main file path string */
 	union pload payload;
-
 
 	//~ struct tokenPackage *left, *right, *next; //these are used for linked lists //deprecated 
 

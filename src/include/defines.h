@@ -55,4 +55,13 @@ exit(EXIT_SUCCESS);	\n}" //this is the end of the application
 
 #define INDEX_PAD 201 //this is a pad for the index of the nodes 
 
+//these are defined functions for handling errors
+
+#define handle_error_en(en, msg) \
+               do { errno = en; perror(msg); exit(EXIT_FAILURE); } while (0)
+
+#define handle_error(msg) \
+               do { perror(msg); exit(EXIT_FAILURE); } while (0)
+
+
 #endif
