@@ -21,6 +21,19 @@
 #define MAX_CMD_LEN_2 4096
 
 
+#define MQNAME	"/CREAL_JOY_0"
+#define JOY_MQNAME	"/CREAL_JOY_0"
+#define LOOPS	1000
+#define PRIO	10
+#define C_MAX_MSG 256 //this will be the max messages right here 
+#define C_DEF_MODE 777 //this is for default shit right here with fds 
+
+
+int pid;
+pid_t mainPid;
+bool mainGameLoopConditional;
+//begin
+
 
 //~ #include <jansson.h> //this is jansson
 //~ #include "libcudacreal.h"
@@ -64,6 +77,28 @@ char* runCommmand(const char *cmd) {
 
 int main(int argc, char **argv)
 {
+	
+	mqd_t mq, joyMq, mouseMq, vizMq;
+	
+	int status;
+	struct mq_attr attr,attrOld;
+	int i; 
+	fd_set set;//crap
+	struct mq_attr mqa;
+	mode_t defaultMode = C_DEF_MODE; 	//this is supposed to be the default mode right here for the queue
+	char tempBuffer[3];
+	joyMq = mq_open(JOY_MQNAME,  O_RDONLY); //openning the bullshit
+		perror("mq_open\n");
+		while(1)
+		{
+			
+				mq_receive(mq, tempBuffer, 3, NULL); 
+				puts(tempBuffer); 
+				usleep(1);
+		}
+	mq_close(mq);
+	perror("mq_close\n");
+		
 	
 	
 					register int i, machineId, forkIndicator; 
@@ -117,4 +152,6 @@ int main(int argc, char **argv)
 		
 		
 }
+
+
 
